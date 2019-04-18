@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.util.HashMap;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +15,7 @@ public class App {
     
     public static void main(String[] args) {
         Client client = Client.create();
+        client.addFilter(new HTTPBasicAuthFilter("user", "password"));
         printList(filterEmployees(client, null, null, 0, null, 0));
         System.out.println();
         printList(filterEmployees(client, null, "Иванов", 0, null, 0));
@@ -40,6 +42,14 @@ public class App {
             createEmployee(client, "", "", 0, "", 0);
         } catch(IllegalStateException e){
             System.out.println("Create employee status: " + e.getMessage());
+        }
+        System.out.println("Attempt to get data with wrong user");
+        try {
+            client.addFilter(new HTTPBasicAuthFilter("admin", "password"));
+            filterEmployees(client, null, "Иванов", 0, null, 0);
+        }
+        catch(IllegalStateException e){
+            System.out.println("Got error " + e.getMessage());
         }
     }
     

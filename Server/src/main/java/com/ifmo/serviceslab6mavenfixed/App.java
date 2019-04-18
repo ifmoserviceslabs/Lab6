@@ -18,6 +18,7 @@ public class App {
         HttpServer server = null;
         try {
             ResourceConfig resourceConfig = new PackagesResourceConfig(EmployeeResource.class.getPackage().getName());
+            resourceConfig.getContainerRequestFilters().add(new AuthenticationFilter());
             server = GrizzlyServerFactory.createHttpServer(BASE_URI, resourceConfig);
             server.start();
             System.in.read();
